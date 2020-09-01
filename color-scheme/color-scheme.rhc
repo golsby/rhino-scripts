@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-16"?>
+<RhinoScriptCompilerProject>
+  <Plugin>
+    <PluginName>ColorScheme</PluginName>
+    <Description>Configure Rhino UI color schemes</Description>
+    <OutputPath>bin\</OutputPath>
+    <AuthorName>Brian Gillespie</AuthorName>
+    <AuthorEmail>brian@mcneel.com</AuthorEmail>
+    <AuthorPhone>206-545-7000</AuthorPhone>
+    <AuthorAddress />
+    <AuthorCountry />
+    <AuthorWebsite>https://discourse.mcneel.com/u/brian/activity/portfolio</AuthorWebsite>
+    <URL />
+    <CopyrightMessage />
+    <SemanticVersion>0.5.0</SemanticVersion>
+  </Plugin>
+  <Commands>
+    <!--Compiled Script: SetColorScheme-->
+    <Command>
+      <Name>SetColorScheme</Name>
+      <Path>set-color-scheme.py</Path>
+      <Type>Normal</Type>
+    </Command>
+  </Commands>
+</RhinoScriptCompilerProject>
