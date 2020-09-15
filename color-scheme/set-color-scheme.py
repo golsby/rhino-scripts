@@ -195,8 +195,8 @@ def setLightScheme(baseColor, accentColor):
     new_object_group.set(System.Drawing.Color.FromArgb(255, 0, 0, 0))
 
     # viewports
-    vpGridMajor.set(getShade(baseColor, 0.1))
-    vpGridMinor.set(getShade(baseColor, 0.05))
+    vpGridMajor.set(getTint(baseColor, 0.1))
+    vpGridMinor.set(getTint(baseColor, 0.05))
     viewport_accent_group.set(getShade(baseColor, 0.2))
     cl = getTint(baseColor, 0.2)
     vpGridX.set(blendColors(System.Drawing.Color.FromArgb(255, 255, 0, 0), baseColor, 0.5))
@@ -351,6 +351,7 @@ ui_border_group = ColorGroup([
     border,
     vpInactiveTitleBackground,
     disabledText,
+    buttonHoverBorder,
 ])
 viewport_accent_group = ColorGroup([
     worldAxesX,
@@ -363,7 +364,6 @@ new_object_group = ColorGroup([
     newObject
 ])
 other_colors_group = ColorGroup([
-    buttonHoverBorder,
     vpGridMajor,
     vpGridMinor,
     vpGridX,
@@ -464,7 +464,77 @@ def run():
     elif schemeType == 2:
         setLightScheme(baseColorOption.CurrentValue, accentColorOption.CurrentValue)
 
-run()
+def run2():
+    go = Rhino.Input.Custom.GetOption()
+    schemeType = detectMode()
+
+    if schemeType == 1: # Dark mode    
+        defaultBaseColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalEnd)
+        defaultAccentColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.PressedEnd)
+    else:
+        defaultBaseColor = Rhino.ApplicationSettings.AppearanceSettings.ViewportBackgroundColor # System.Drawing.Color.FromArgb(255, 60, 70, 100)
+        defaultAccentColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.PressedEnd)
+
+    go.SetCommandPrompt("Scheme Type")
+    if schemeType == 0:
+        go.SetCommandPromptDefault("Default")
+    elif schemeType == 1:
+        go.SetCommandPromptDefault("Dark")
+    elif schemeType == 2:
+        go.SetCommandPromptDefault("Light")
+    go.AddOption("Dark")
+    go.AddOption("Light")
+    go.AddOption("RestoreDefaults")
+    go.AcceptNothing(True)
+
+    result = go.Get()
+    if result == Rhino.Input.GetResult.Option:
+        n = go.Option().EnglishName
+        if n == 'RestoreDefaults':
+            restoreDefaults()
+            return
+        elif n == "Dark":
+            schemeType = 1
+        elif n == "Light":
+            schemeType = 2
+    elif result == Rhino.Input.GetResult.Nothing:
+        pass
+    else:
+        return
+        
+    if schemeType == 0:
+        print "Retaining default scheme."
+        return
+
+    go = Rhino.Input.Custom.GetOption()
+    go.SetCommandPrompt("Set colors, press Enter when done")
+    baseColorOption = Rhino.Input.Custom.OptionColor(defaultBaseColor)
+    accentColorOption = Rhino.Input.Custom.OptionColor(defaultAccentColor)
+    go.AddOptionColor("BaseColor", baseColorOption, "Base Color")
+    go.AddOptionColor("AccentColor", accentColorOption, "Accent Color")
+    go.AcceptNothing(True)
+    
+    while(True):
+        result = go.Get()
+        if result == Rhino.Input.GetResult.Option:
+            n = go.Option().EnglishName
+            if n == 'Type':
+                schemeType = go.Option().CurrentListOptionIndex
+        elif result == Rhino.Input.GetResult.Nothing:
+            break
+        else:
+            return
+
+    print schemeType
+    if schemeType == 0:
+        restoreDefaults()
+    elif schemeType == 1:
+        setDarkScheme(baseColorOption.CurrentValue, accentColorOption.CurrentValue)
+    elif schemeType == 2:
+        setLightScheme(baseColorOption.CurrentValue, accentColorOption.CurrentValue)
+
+
+run2()
 
 
 # 
