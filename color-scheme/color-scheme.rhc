@@ -12,7 +12,7 @@
     <AuthorWebsite>https://discourse.mcneel.com/u/brian/activity/portfolio</AuthorWebsite>
     <URL />
     <CopyrightMessage />
-    <SemanticVersion>0.6.0</SemanticVersion>
+    <SemanticVersion>0.6.3</SemanticVersion>
   </Plugin>
   <Commands>
     <!--Compiled Script: SetColorScheme-->
