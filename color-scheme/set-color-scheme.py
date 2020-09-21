@@ -153,25 +153,23 @@ class ColorGroup(list):
 
     
 def setDarkScheme(baseColor, accentColor):
-    colorfunc = getTint
-    
     nonclient = baseColor
-    client = colorfunc(baseColor, 0.2)
+    client = getTint(baseColor, 0.2)
     base_color_group.set(client)
     textbox_color_group.set(client)
     ui_color_group.set(nonclient)
     cHover = setSaturation(setBrightness(blendColors(accentColor, baseColor, 0.3), 0.6), 0.4)
     ui_hover_group.set(cHover)
     ui_click_group.set(accentColor)
-    ui_text_group.set(colorfunc(baseColor, 0.9))
-    ui_border_group.set(colorfunc(baseColor, 0.4))
+    ui_text_group.set(getTint(baseColor, 0.9))
+    ui_border_group.set(getTint(baseColor, 0.4))
     new_object_group.set(System.Drawing.Color.FromArgb(255, 255, 255, 255))
  
     # viewports
-    vpGridMajor.set(colorfunc(client, 0.1))
-    vpGridMinor.set(colorfunc(client, 0.05))
-    viewport_accent_group.set(colorfunc(client, 0.2))
-    cl = colorfunc(baseColor, 0.4)
+    vpGridMajor.set(getTint(client, 0.13))
+    vpGridMinor.set(getTint(client, 0.08))
+    viewport_accent_group.set(getTint(client, 0.2))
+    cl = getTint(baseColor, 0.4)
     vpGridX.set(blendColors(System.Drawing.Color.FromArgb(255, 255, 0, 0), baseColor, 0.5))
     vpGridY.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 155, 45), baseColor, 0.5))
     vpGridZ.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 0, 255), baseColor, 0.5))
@@ -181,12 +179,10 @@ def setDarkScheme(baseColor, accentColor):
     inactiveCaption.set(blendColors(baseColor, accentColor, 0.2))
 
 def setLightScheme(baseColor, accentColor):
-    colorfunc = getTint
-    
     base_color_group.set(baseColor)
     textbox_color_group.set(System.Drawing.Color.White)
-    colorUi = colorfunc(baseColor, 0.6)
-    ui_color_group.set(colorfunc(baseColor, 0.6))
+    colorUi = getTint(baseColor, 0.6)
+    ui_color_group.set(getTint(baseColor, 0.6))
     cHover = setSaturation(setBrightness(blendColors(accentColor, baseColor, 0.3), 0.6), 0.4)
     ui_hover_group.set(cHover)
     ui_click_group.set(accentColor)
@@ -195,8 +191,8 @@ def setLightScheme(baseColor, accentColor):
     new_object_group.set(System.Drawing.Color.FromArgb(255, 0, 0, 0))
 
     # viewports
-    vpGridMajor.set(getTint(baseColor, 0.1))
-    vpGridMinor.set(getTint(baseColor, 0.05))
+    vpGridMajor.set(getShade(baseColor, 0.13))
+    vpGridMinor.set(getShade(baseColor, 0.08 ))
     viewport_accent_group.set(getShade(baseColor, 0.2))
     cl = getTint(baseColor, 0.2)
     vpGridX.set(blendColors(System.Drawing.Color.FromArgb(255, 255, 0, 0), baseColor, 0.5))
@@ -425,55 +421,19 @@ def detectMode():
     
     return 2
 
+
 def run():
     go = Rhino.Input.Custom.GetOption()
     schemeType = detectMode()
-    go.SetCommandPrompt("Scheme Settings")
-    go.AddOptionList("Type", ["Default", "Dark", "Light"], schemeType)
+    defaultDarkBaseColor = System.Drawing.Color.FromArgb(99,100,107
+    )
+    defaultLightBaseColor = System.Drawing.Color.FromArgb(201,206,212)
 
-    if schemeType == 1: # Dark mode    
-        defaultBaseColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalEnd)
-        defaultAccentColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.PressedEnd)
+    defaultAccentColor = buttonClickBottom.get()
+    if schemeType == 1: # Dark mode  
+        defaultBaseColor = activeTabBottom.get()
     else:
-        defaultBaseColor = Rhino.ApplicationSettings.AppearanceSettings.ViewportBackgroundColor # System.Drawing.Color.FromArgb(255, 60, 70, 100)
-        defaultAccentColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.PressedEnd)
-
-    baseColorOption = Rhino.Input.Custom.OptionColor(defaultBaseColor)
-    accentColorOption = Rhino.Input.Custom.OptionColor(defaultAccentColor)
-    go.AddOptionColor("BaseColor", baseColorOption, "Base Color")
-    go.AddOptionColor("AccentColor", accentColorOption, "Accent Color")
-    go.AcceptNothing(True)
-    
-    while True:
-        result = go.Get()
-        if result == Rhino.Input.GetResult.Option:
-            n = go.Option().EnglishName
-            if n == 'Type':
-                schemeType = go.Option().CurrentListOptionIndex
-        elif result == Rhino.Input.GetResult.Nothing:
-            print "Success!!!"
-            break
-        else:
-            return
-            
-    print schemeType
-    if schemeType == 0:
-        restoreDefaults()
-    elif schemeType == 1:
-        setDarkScheme(baseColorOption.CurrentValue, accentColorOption.CurrentValue)
-    elif schemeType == 2:
-        setLightScheme(baseColorOption.CurrentValue, accentColorOption.CurrentValue)
-
-def run2():
-    go = Rhino.Input.Custom.GetOption()
-    schemeType = detectMode()
-
-    if schemeType == 1: # Dark mode    
-        defaultBaseColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.NormalEnd)
-        defaultAccentColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.PressedEnd)
-    else:
-        defaultBaseColor = Rhino.ApplicationSettings.AppearanceSettings.ViewportBackgroundColor # System.Drawing.Color.FromArgb(255, 60, 70, 100)
-        defaultAccentColor = Rhino.ApplicationSettings.AppearanceSettings.GetPaintColor(Rhino.ApplicationSettings.PaintColor.PressedEnd)
+        defaultBaseColor = vpBackground.get()
 
     go.SetCommandPrompt("Scheme Type")
     if schemeType == 0:
@@ -495,8 +455,16 @@ def run2():
             return
         elif n == "Dark":
             schemeType = 1
+            if defaultBaseColor == vpBackground.getDefault():
+                defaultBaseColor = defaultDarkBaseColor
+            if defaultBaseColor == defaultLightBaseColor:
+                defaultBaseColor = defaultDarkBaseColor
         elif n == "Light":
             schemeType = 2
+            if defaultBaseColor == defaultDarkBaseColor:
+                defaultBaseColor = defaultLightBaseColor
+            if defaultBaseColor == vpBackground.getDefault():
+                defaultBaseColor = defaultLightBaseColor
     elif result == Rhino.Input.GetResult.Nothing:
         pass
     else:
@@ -534,7 +502,7 @@ def run2():
         setLightScheme(baseColorOption.CurrentValue, accentColorOption.CurrentValue)
 
 
-run2()
+run()
 
 
 # 
