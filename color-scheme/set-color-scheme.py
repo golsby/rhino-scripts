@@ -2,6 +2,10 @@ import Rhino
 import System.Drawing
 import math
 
+defaultDarkBaseColor = System.Drawing.Color.FromArgb(99,100,107)
+defaultLightBaseColor = System.Drawing.Color.FromArgb(233,235,237)
+
+
 def blendChannel(a, b, amount):
     return a + (b - a) * amount
 
@@ -31,6 +35,8 @@ def getShade(inputColor, amount=0.5):
     black = System.Drawing.Color.FromArgb(inputColor.A, 0, 0, 0)
     return blendColors(inputColor, black, amount)
 
+def setTransparency(inputColor, amount=0.0):
+    return System.Drawing.Color.FromArgb(amount*255, inputColor.R, inputColor.G, inputColor.B)
 
 class ColorHsb(object):
     def __init__(self, color=None):
@@ -155,7 +161,6 @@ class ColorGroup(list):
 def setDarkScheme(baseColor, accentColor):
     nonclient = baseColor
     client = getTint(baseColor, 0.2)
-    base_color_group.set(client)
     textbox_color_group.set(client)
     ui_color_group.set(nonclient)
     cHover = setSaturation(setBrightness(blendColors(accentColor, baseColor, 0.3), 0.6), 0.4)
@@ -166,42 +171,55 @@ def setDarkScheme(baseColor, accentColor):
     new_object_group.set(System.Drawing.Color.FromArgb(255, 255, 255, 255))
  
     # viewports
-    vpGridMajor.set(getTint(client, 0.13))
-    vpGridMinor.set(getTint(client, 0.08))
-    viewport_accent_group.set(getTint(client, 0.2))
-    cl = getTint(baseColor, 0.4)
-    vpGridX.set(blendColors(System.Drawing.Color.FromArgb(255, 255, 0, 0), baseColor, 0.5))
-    vpGridY.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 155, 45), baseColor, 0.5))
-    vpGridZ.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 0, 255), baseColor, 0.5))
+    #vpGridMajor.set(getTint(client, 0.13))
+    #vpGridMinor.set(getTint(client, 0.08))
+    #viewport_accent_group.set(getTint(client, 0.2))
+    #cl = getTint(baseColor, 0.4)
+    #vpGridX.set(blendColors(System.Drawing.Color.FromArgb(255, 255, 0, 0), baseColor, 0.5))
+    #vpGridY.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 155, 45), baseColor, 0.5))
+    #vpGridZ.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 0, 255), baseColor, 0.5))
     vpActiveTitleBackground.set(accentColor)
     
     activeCaption.set(blendColors(baseColor, accentColor, 0.7))
     inactiveCaption.set(blendColors(baseColor, accentColor, 0.2))
 
+    stroke = setBrightness(setSaturation(accentColor, 0.2), 0.3)
+    fill = setTransparency(accentColor, 0.11)
+    selectionWindowStroke.set(stroke)
+    selectionWindowFill.set(fill)
+    crossingWindowStroke.set(stroke)
+    crossingWindowFill.set(fill)
+
+
 def setLightScheme(baseColor, accentColor):
-    base_color_group.set(baseColor)
+    hoverColor = setBrightness(setSaturation(accentColor, 0.5), 0.75)
+    
+    ui_color_group.set(baseColor)
     textbox_color_group.set(System.Drawing.Color.White)
-    colorUi = getTint(baseColor, 0.6)
-    ui_color_group.set(getTint(baseColor, 0.6))
-    cHover = setSaturation(setBrightness(blendColors(accentColor, baseColor, 0.3), 0.6), 0.4)
-    ui_hover_group.set(cHover)
+    ui_hover_group.set(hoverColor)
     ui_click_group.set(accentColor)
+    vpActiveTitleBackground.set(accentColor) #System.Drawing.Color.FromArgb(143, 195, 222))
+    
     ui_text_group.set(getShade(baseColor, 0.8))
-    ui_border_group.set(getShade(colorUi, 0.25))
-    new_object_group.set(System.Drawing.Color.FromArgb(255, 0, 0, 0))
 
-    # viewports
-    vpGridMajor.set(getShade(baseColor, 0.13))
-    vpGridMinor.set(getShade(baseColor, 0.08 ))
-    viewport_accent_group.set(getShade(baseColor, 0.2))
-    cl = getTint(baseColor, 0.2)
-    vpGridX.set(blendColors(System.Drawing.Color.FromArgb(255, 255, 0, 0), baseColor, 0.5))
-    vpGridY.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 155, 45), baseColor, 0.5))
-    vpGridZ.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 0, 255), baseColor, 0.5))
-    vpActiveTitleBackground.set(accentColor)
+    activeCaption.set(accentColor)
+    inactiveCaption.set(setBrightness(setSaturation(hoverColor, 0.1), 0.6))
 
-    activeCaption.set(blendColors(baseColor, accentColor, 0.7))
-    inactiveCaption.set(blendColors(baseColor, accentColor, 0.2))
+    stroke = setBrightness(setSaturation(accentColor, 0.2), 0.3)
+    fill = setTransparency(accentColor, 0.11)
+    selectionWindowStroke.set(stroke)
+    selectionWindowFill.set(fill)
+    crossingWindowStroke.set(stroke)
+    crossingWindowFill.set(fill)
+
+    
+
+def setV7DefaultColors():
+    restoreDefaults()
+    baseColor = defaultLightBaseColor
+    accentColor = System.Drawing.Color.FromArgb(217, 233, 243)
+    setLightScheme(baseColor, accentColor)
+    
 
 
 def setAllColorsSame(color):
@@ -306,12 +324,11 @@ vpInactiveTitleBackground = UiPaintColor('InactiveViewportTitle')
 activeCaption = UiPaintColor('ActiveCaption')
 inactiveCaption = UiPaintColor('InactiveCaption')
 
-base_color_group = ColorGroup([
-    vpBackground, 
-    commandPromptBackground,
-    editBoxBackground,
-    ]
-)
+selectionWindowStroke = UiColor('SelectionWindowStrokeColor')
+selectionWindowFill = UiColor('SelectionWindowFillColor')
+crossingWindowStroke = UiColor('SelectionWindowCrossingStrokeColor')
+crossingWindowFill = UiColor('SelectionWindowCrossingFillColor')
+
 textbox_color_group = ColorGroup([
     commandPromptBackground,
     editBoxBackground,
@@ -360,6 +377,7 @@ new_object_group = ColorGroup([
     newObject
 ])
 other_colors_group = ColorGroup([
+    vpBackground, 
     vpGridMajor,
     vpGridMinor,
     vpGridX,
@@ -374,10 +392,14 @@ other_colors_group = ColorGroup([
     trackingColor,
     vpActiveTitleBackground,
     vpInactiveTitleBackground,
+    selectionWindowFill,
+    selectionWindowStroke,
+    crossingWindowFill,
+    crossingWindowStroke,
 ])
 
 all_colors = []
-all_colors.extend(base_color_group)
+all_colors.extend(textbox_color_group)
 all_colors.extend(ui_color_group)
 all_colors.extend(ui_text_group)
 all_colors.extend(ui_hover_group)
@@ -410,7 +432,6 @@ def detectMode():
         if c.name == 'Rhino.ApplicationSettings.PaintColor.EditBoxBackground':
             continue
         if c.get() != c.getDefault():
-            print "Not default: " + c.name
             isDefault = False
     
     if isDefault:
@@ -425,15 +446,9 @@ def detectMode():
 def run():
     go = Rhino.Input.Custom.GetOption()
     schemeType = detectMode()
-    defaultDarkBaseColor = System.Drawing.Color.FromArgb(99,100,107
-    )
-    defaultLightBaseColor = System.Drawing.Color.FromArgb(201,206,212)
 
     defaultAccentColor = buttonClickBottom.get()
-    if schemeType == 1: # Dark mode  
-        defaultBaseColor = activeTabBottom.get()
-    else:
-        defaultBaseColor = vpBackground.get()
+    defaultBaseColor = activeTabBottom.get()
 
     go.SetCommandPrompt("Scheme Type")
     if schemeType == 0:
@@ -445,6 +460,7 @@ def run():
     go.AddOption("Dark")
     go.AddOption("Light")
     go.AddOption("RestoreDefaults")
+    # go.AddOption("NewDefaults")
     go.AcceptNothing(True)
 
     result = go.Get()
@@ -452,6 +468,9 @@ def run():
         n = go.Option().EnglishName
         if n == 'RestoreDefaults':
             restoreDefaults()
+            return
+        elif n == 'NewDefaults':
+            setV7DefaultColors()
             return
         elif n == "Dark":
             schemeType = 1
