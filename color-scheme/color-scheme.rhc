@@ -12,7 +12,9 @@
     <AuthorWebsite>https://discourse.mcneel.com/u/brian/activity/portfolio</AuthorWebsite>
     <URL />
     <CopyrightMessage />
-    <SemanticVersion>0.6.13</SemanticVersion>
+    <SemanticVersion>0.6.21</SemanticVersion>
+    <Platform>Windows</Platform>
+    <MinimumRhinoVersion>7.0</MinimumRhinoVersion>
   </Plugin>
   <Commands>
     <!--Compiled Script: SetColorScheme-->

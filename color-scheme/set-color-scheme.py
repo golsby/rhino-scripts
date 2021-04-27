@@ -3,7 +3,7 @@ import System.Drawing
 import math
 
 defaultDarkBaseColor = System.Drawing.Color.FromArgb(99,100,107)
-defaultLightBaseColor = System.Drawing.Color.FromArgb(233,235,237)
+defaultLightBaseColor = System.Drawing.Color.FromArgb(234,236,240)
 
 
 def blendChannel(a, b, amount):
@@ -168,16 +168,6 @@ def setDarkScheme(baseColor, accentColor):
     ui_click_group.set(accentColor)
     ui_text_group.set(getTint(baseColor, 0.9))
     ui_border_group.set(getTint(baseColor, 0.4))
-    new_object_group.set(System.Drawing.Color.FromArgb(255, 255, 255, 255))
- 
-    # viewports
-    #vpGridMajor.set(getTint(client, 0.13))
-    #vpGridMinor.set(getTint(client, 0.08))
-    #viewport_accent_group.set(getTint(client, 0.2))
-    #cl = getTint(baseColor, 0.4)
-    #vpGridX.set(blendColors(System.Drawing.Color.FromArgb(255, 255, 0, 0), baseColor, 0.5))
-    #vpGridY.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 155, 45), baseColor, 0.5))
-    #vpGridZ.set(blendColors(System.Drawing.Color.FromArgb(255, 0, 0, 255), baseColor, 0.5))
     vpActiveTitleBackground.set(accentColor)
     
     activeCaption.set(blendColors(baseColor, accentColor, 0.7))

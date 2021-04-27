@@ -1,6 +1,7 @@
 import re
 import subprocess
 import os
+import shutil
 
 conf = 'color-scheme.rhc'
 version = ''
@@ -27,7 +28,9 @@ cwd = os.path.dirname(__file__)
 os.chdir(cwd)
 full_path = os.path.join(cwd, conf)
 print(full_path)
-subprocess.call(['RhinoScriptCompiler', full_path])
-newfile = 'bin/colorscheme-{0}-rh7-win.yak'.format(version)
-os.rename('bin/colorscheme-{0}-any-any.yak'.format(version), newfile)
-subprocess.call(['yak', 'push', newfile])
+subprocess.call(['C:/Program Files/Rhino 7/System/RhinoScriptCompiler', full_path])
+newfile = 'bin/colorscheme-{0}-rh7_0-win.yak'.format(version)
+new8file = 'bin/colorscheme-{0}-rh8_0-win.yak'.format(version)
+shutil.copy(newfile, new8file)
+subprocess.call(['C:/Program Files/Rhino 7/System/yak', 'push', newfile])
+subprocess.call(['C:/Program Files/Rhino 7/System/yak', 'push', new8file])
